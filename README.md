@@ -1,0 +1,1 @@
+# hotspotshield-smart-cli
