@@ -6,6 +6,8 @@ command=$1
 hotspotshield="hotspotshield"
 connect="connect"
 disconnect="disconnect"
+help="help"
+locations="locations"
 
 initializing="initializing"
 starting="starting"
@@ -18,9 +20,10 @@ help() {
     echo
     echo "Syntax: $cli [command] [extra]"
     echo "options:"
-    echo "  connect    | c  [LOCATION]      Connect to [LOCATION]."
-    echo "  disconnect | d                  Disconnect."
-    echo "  help       | h                  Print this Help."
+    echo "  $connect    | c  [LOCATION]      Connect to [LOCATION]."
+    echo "  $disconnect | d                  Disconnect."
+    echo "  $locations  | l                  List of all available locations."
+    echo "  $help       | h                  Print this Help."
     echo
 }
 
@@ -79,6 +82,8 @@ if [ $command == "connect" ] || [ $command == "c" ]; then
 elif [ $command == "disconnect" ]  || [ $command == "d" ]; then
     $hotspotshield $disconnect >/dev/null 2>&1
     log_status
+elif [ $command == "locations" ]  || [ $command == "l" ]; then
+    $hotspotshield $locations
 else
     help
 fi
