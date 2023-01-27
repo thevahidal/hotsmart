@@ -15,7 +15,8 @@ while IFS= read -r line; do
         continue
     fi
 
-    locations="$locations $location"
+    locations="$locations ${location@U}"
+    locations="$locations ${location@L}"
 
 done <<< "$locations_output"
 
