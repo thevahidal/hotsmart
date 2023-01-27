@@ -1,5 +1,7 @@
 #!/bin/bash
+
 cli=$0
+command=$1
 
 hotspotshield="hotspotshield"
 connect="connect"
@@ -39,7 +41,7 @@ log_status() {
         elif [[ "$status" == *"$connecting"* ]]; then
             echo "Connecting..."
         elif [[ "$status" == *"$disconnected"* ]]; then
-            echo "Disonnected."
+            echo "Disconnected."
             break
         elif [[ "$status" == *"$connected"* ]]; then
             echo "Connected to $location."
@@ -55,14 +57,18 @@ if ! command -v hotspotshield &>/dev/null; then
     exit
 fi
 
-command=$1
-
 if [ $command == "connect" ] || [ $command == "c" ]; then
 
     location=$2
 
     if [ -z $location ]; then
-        echo "Location is required"
+        echo "Location is required."
+        echo "Syntax: $cli connect [LOCATION]"
+        echo "e.g. $cli connect DE"
+
+        exit
+    elif [ $location == "smart" ]; then
+        echo "Not implemented yet."
         exit
     fi
 
