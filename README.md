@@ -4,7 +4,7 @@ An smarter CLI for Hotspotshield.
 ## Installation
 
 ```bash
-bash -c "$(curl -Ls https://raw.githubusercontent.com/thevahidal/hotsmart/main/install.sh)"
+curl -s https://raw.githubusercontent.com/thevahidal/hotsmart/main/install.sh | sh
 ```
 
 ## Usage
