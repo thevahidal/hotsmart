@@ -12,7 +12,7 @@ _hotsmart_completions() {
         COMPREPLY=($(compgen -W "connect c disconnect d locations h completion C" -- "${COMP_WORDS[1]}"))
     elif [ "${#COMP_WORDS[@]}" -le "3" ]; then
         if [ "${COMP_WORDS[1]}" == "$connect" ] || [ "${COMP_WORDS[1]}" == "$c" ]; then
-            COMPREPLY=($(compgen -W "de il se" -- "${COMP_WORDS[2]}"))
+            COMPREPLY=($(compgen -W "$(cat locations.txt)" -- "${COMP_WORDS[2]}"))
         elif [ "${COMP_WORDS[1]}" == "$completion" ] || [ "${COMP_WORDS[1]}" == "$C" ]; then
             COMPREPLY=($(compgen -W "bash" -- "${COMP_WORDS[2]}"))
         fi
