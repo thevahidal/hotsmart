@@ -1,9 +1,15 @@
 #!/bin/bash
 
+home_dir=~
+installation_dir=${home_dir}/.hotsmart/
+hotsmart_file=hotsmart.sh
+completion_file=hotsmart-completion.bash
+
 cli=$0
 command=$1
 
-hotspotshield="hotspotshield"
+start="start"
+status="status"
 connect="connect"
 disconnect="disconnect"
 help="help"
@@ -25,6 +31,7 @@ help() {
     echo "  $disconnect | d                  Disconnect."
     echo "  $locations  | l                  List of all available locations."
     echo "  $completion | C  [SHELL]         Enable code completion for your shell. (bash)"
+    echo "  $status     | s                  Show current status info."
     echo "  $help       | h                  Print this help."
     echo
 }
@@ -33,27 +40,27 @@ log_status() {
     prev_status=""
 
     while sleep 1; do 
-        status="$(hotspotshield status)"
+        status_output="$(hotspotshield status)"
 
-        if [[ "$status" == "$prev_status" ]]; then
+        if [[ "$status_output" == "$prev_status" ]]; then
             continue
         fi
 
-        if [[ "$status" == *"$initializing"* ]]; then
+        if [[ "$status_output" == *"$initializing"* ]]; then
             echo "Initializing..."
-        elif [[ "$status" == *"$starting"* ]]; then
+        elif [[ "$status_output" == *"$starting"* ]]; then
             echo "Starting..."
-        elif [[ "$status" == *"$connecting"* ]]; then
+        elif [[ "$status_output" == *"$connecting"* ]]; then
             echo "Connecting..."
-        elif [[ "$status" == *"$disconnected"* ]]; then
+        elif [[ "$status_output" == *"$disconnected"* ]]; then
             echo "Disconnected."
             break
-        elif [[ "$status" == *"$connected"* ]]; then
-            echo "Connected to $location."
+        elif [[ "$status_output" == *"$connected"* ]]; then
+            echo "Connected."
             break
         fi
 
-        prev_status=$status
+        prev_status=$status_output
     done
 }
 
@@ -62,33 +69,37 @@ if ! command -v hotspotshield &>/dev/null; then
     exit
 fi
 
-if [ $command == "connect" ] || [ $command == "c" ]; then
-    location=$2
+if [ $command == "$connect" ] || [ $command == "c" ]; then
+    location_arg=$2
 
-    if [ -z $location ]; then
+    if [ -z $location_arg ]; then
         echo "Location is required."
         echo "Syntax: $cli connect [LOCATION]"
         echo "e.g. $cli connect DE"
 
         exit
-    elif [ $location == "smart" ]; then
+    elif [ $location_arg == "smart" ]; then
         echo "Not implemented yet."
         exit
     fi
 
-    $hotspotshield $disconnect >/dev/null 2>&1
-    $hotspotshield $connect $location >/dev/null 2>&1
+    hotspotshield start >/dev/null 2>&1
+    hotspotshield disconnect >/dev/null 2>&1
+    sleep 1
+    hotspotshield connect $location_arg >/dev/null 2>&1
 
     log_status
 elif [ $command == "$disconnect" ]  || [ $command == "d" ]; then
-    $hotspotshield $disconnect >/dev/null 2>&1
+    hotspotshield disconnect >/dev/null 2>&1
     log_status
+elif [ $command == "$status" ]  || [ $command == "s" ]; then
+    hotspotshield status
 elif [ $command == "$locations" ]  || [ $command == "l" ]; then
-    $hotspotshield $locations
+    hotspotshield locations
 elif [ $command == "$completion" ]  || [ $command == "C" ]; then
-    shell=$2
+    shell_arg=$2
     
-    if [ -z $shell ]; then
+    if [ -z $shell_arg ]; then
         echo "Shell is required."
         echo "Syntax: $cli completion [SHELL]"
         echo "e.g. $cli completion bash"
@@ -97,7 +108,12 @@ elif [ $command == "$completion" ]  || [ $command == "C" ]; then
         exit
     fi
 
-    echo "Activating shell completion for $shell"
+    sudo source ${installation_dir}${completion_file}
+    
+    locations_output = $(hotspotshield locations) 
+    echo $locations_output
+
+    echo "Shell completion for $shell_arg activated."
 
 else
     help

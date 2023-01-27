@@ -1,4 +1,5 @@
 #/usr/bin/env bash
+
 cli=$0
 connect="connect"
 c="c"
