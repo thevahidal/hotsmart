@@ -8,6 +8,7 @@ connect="connect"
 disconnect="disconnect"
 help="help"
 locations="locations"
+completion="completion"
 
 initializing="initializing"
 starting="starting"
@@ -23,7 +24,8 @@ help() {
     echo "  $connect    | c  [LOCATION]      Connect to [LOCATION]."
     echo "  $disconnect | d                  Disconnect."
     echo "  $locations  | l                  List of all available locations."
-    echo "  $help       | h                  Print this Help."
+    echo "  $completion | C  [SHELL]         Enable code completion for your shell. (bash)"
+    echo "  $help       | h                  Print this help."
     echo
 }
 
@@ -61,7 +63,6 @@ if ! command -v hotspotshield &>/dev/null; then
 fi
 
 if [ $command == "connect" ] || [ $command == "c" ]; then
-
     location=$2
 
     if [ -z $location ]; then
@@ -79,11 +80,25 @@ if [ $command == "connect" ] || [ $command == "c" ]; then
     $hotspotshield $connect $location >/dev/null 2>&1
 
     log_status
-elif [ $command == "disconnect" ]  || [ $command == "d" ]; then
+elif [ $command == "$disconnect" ]  || [ $command == "d" ]; then
     $hotspotshield $disconnect >/dev/null 2>&1
     log_status
-elif [ $command == "locations" ]  || [ $command == "l" ]; then
+elif [ $command == "$locations" ]  || [ $command == "l" ]; then
     $hotspotshield $locations
+elif [ $command == "$completion" ]  || [ $command == "C" ]; then
+    shell=$2
+    
+    if [ -z $shell ]; then
+        echo "Shell is required."
+        echo "Syntax: $cli completion [SHELL]"
+        echo "e.g. $cli completion bash"
+        echo "Available Shells: bash"
+
+        exit
+    fi
+
+    echo "Activating shell completion for $shell"
+
 else
     help
 fi
